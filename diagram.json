@@ -1,0 +1,141 @@
+{
+  "version": 1,
+  "author": "Energy Balancing System",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-arduino-uno", "id": "uno", "top": 300, "left": 220, "attrs": {} },
+    { "type": "wokwi-lcd1602", "id": "lcd", "top": 20, "left": 400, "attrs": { "pins": "i2c" } },
+    {
+      "type": "wokwi-potentiometer",
+      "id": "pot1",
+      "top": 80,
+      "left": -180,
+      "attrs": { "label": "Sensor A (simulates SCT-013 #1)" }
+    },
+    {
+      "type": "wokwi-potentiometer",
+      "id": "pot2",
+      "top": 200,
+      "left": -180,
+      "attrs": { "label": "Sensor B (simulates SCT-013 #2)" }
+    },
+    {
+      "type": "wokwi-potentiometer",
+      "id": "pot3",
+      "top": 320,
+      "left": -180,
+      "attrs": { "label": "Sensor C (simulates SCT-013 #3)" }
+    },
+    { "type": "wokwi-relay-module", "id": "relay1", "top": 20, "left": 700, "attrs": {} },
+    { "type": "wokwi-relay-module", "id": "relay2", "top": 120, "left": 700, "attrs": {} },
+    { "type": "wokwi-relay-module", "id": "relay3", "top": 220, "left": 700, "attrs": {} },
+    {
+      "type": "wokwi-led",
+      "id": "led_r1",
+      "top": 500,
+      "left": 680,
+      "attrs": { "color": "red", "label": "Overload A" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led_r2",
+      "top": 560,
+      "left": 680,
+      "attrs": { "color": "red", "label": "Overload B" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led_r3",
+      "top": 620,
+      "left": 680,
+      "attrs": { "color": "red", "label": "Overload C" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "res_led1",
+      "top": 500,
+      "left": 620,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "res_led2",
+      "top": 560,
+      "left": 620,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "res_led3",
+      "top": 620,
+      "left": 620,
+      "attrs": { "value": "220" }
+    },
+    { "type": "wokwi-buzzer", "id": "buzzer", "top": 700, "left": 500, "attrs": {} },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn1",
+      "top": 700,
+      "left": 100,
+      "attrs": { "color": "green", "label": "Override" }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn2",
+      "top": 760,
+      "left": 100,
+      "attrs": { "color": "yellow", "label": "Reset" }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn3",
+      "top": 820,
+      "left": 100,
+      "attrs": { "color": "blue", "label": "Mode" }
+    }
+  ],
+  "connections": [
+    [ "uno:A0", "pot1:SIG", "green", [] ],
+    [ "uno:A1", "pot2:SIG", "green", [] ],
+    [ "uno:A2", "pot3:SIG", "green", [] ],
+    [ "pot1:VCC", "uno:5V", "red", [] ],
+    [ "pot1:GND", "uno:GND.2", "black", [] ],
+    [ "pot2:VCC", "uno:5V", "red", [] ],
+    [ "pot2:GND", "uno:GND.2", "black", [] ],
+    [ "pot3:VCC", "uno:5V", "red", [] ],
+    [ "pot3:GND", "uno:GND.2", "black", [] ],
+    [ "uno:SDA", "lcd:SDA", "blue", [] ],
+    [ "uno:SCL", "lcd:SCL", "yellow", [] ],
+    [ "lcd:VCC", "uno:5V", "red", [] ],
+    [ "lcd:GND", "uno:GND.2", "black", [] ],
+    [ "uno:2", "relay1:IN", "orange", [] ],
+    [ "uno:3", "relay2:IN", "orange", [] ],
+    [ "uno:4", "relay3:IN", "orange", [] ],
+    [ "relay1:VCC", "uno:5V", "red", [] ],
+    [ "relay1:GND", "uno:GND.2", "black", [] ],
+    [ "relay2:VCC", "uno:5V", "red", [] ],
+    [ "relay2:GND", "uno:GND.2", "black", [] ],
+    [ "relay3:VCC", "uno:5V", "red", [] ],
+    [ "relay3:GND", "uno:GND.2", "black", [] ],
+    [ "uno:6", "res_led1:1", "red", [] ],
+    [ "res_led1:2", "led_r1:A", "red", [] ],
+    [ "led_r1:C", "uno:GND.2", "black", [] ],
+    [ "uno:7", "res_led2:1", "red", [] ],
+    [ "res_led2:2", "led_r2:A", "red", [] ],
+    [ "led_r2:C", "uno:GND.2", "black", [] ],
+    [ "uno:8", "res_led3:1", "red", [] ],
+    [ "res_led3:2", "led_r3:A", "red", [] ],
+    [ "led_r3:C", "uno:GND.2", "black", [] ],
+    [ "uno:9", "buzzer:1", "purple", [] ],
+    [ "buzzer:2", "uno:GND.2", "black", [] ],
+    [ "btn1:1.l", "uno:10", "gray", [] ],
+    [ "btn1:2.l", "uno:GND.2", "black", [] ],
+    [ "btn2:1.l", "uno:11", "gray", [] ],
+    [ "btn2:2.l", "uno:GND.2", "black", [] ],
+    [ "btn3:1.l", "uno:12", "gray", [] ],
+    [ "btn3:2.l", "uno:GND.2", "black", [] ],
+    [ "lcd:SDA", "uno:A4.2", "green", [ "h0" ] ],
+    [ "lcd:SCL", "uno:A5.2", "green", [ "h0" ] ]
+  ],
+  "dependencies": {}
+}
