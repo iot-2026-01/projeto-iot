@@ -101,7 +101,7 @@
       "id": "serial",
       "top": 400,
       "left": 200,
-      "attrs": { }
+      "attrs": { "baudRate": "115200" }
     }
   ],
   "connections": [

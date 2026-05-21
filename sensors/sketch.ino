@@ -127,7 +127,7 @@ void ensure_mqtt(uint32_t now);
 //  SETUP
 // ============================================================
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println(F("=== Energy Balancing System v2.0 ==="));
   Serial.println(F("Ch,Current_A,Overload,Relay"));
 

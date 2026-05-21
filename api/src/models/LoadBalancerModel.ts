@@ -78,4 +78,9 @@ export class LoadBalancerModel {
   incrementUptime(): void {
     this.uptime += 1;
   }
+
+  // Sync uptime from MQTT telemetry (milliseconds from ESP32)
+  syncUptime(uptimeMs: number): void {
+    this.uptime = uptimeMs;
+  }
 }
