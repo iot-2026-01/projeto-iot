@@ -2,6 +2,9 @@
   "version": 1,
   "author": "Energy Balancing System",
   "editor": "wokwi",
+  "serialMonitor": {
+    "display": "always"
+  },
   "parts": [
     { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 280, "left": 200, "attrs": {} },
     { "type": "wokwi-lcd1602", "id": "lcd", "top": 20, "left": 400, "attrs": { "pins": "i2c" } },
@@ -92,6 +95,13 @@
       "top": 820,
       "left": 100,
       "attrs": { "color": "blue", "label": "Mode" }
+    },
+    {
+      "type": "wokwi-serial-monitor",
+      "id": "serial",
+      "top": 400,
+      "left": 200,
+      "attrs": { }
     }
   ],
   "connections": [
@@ -129,11 +139,13 @@
     [ "esp:5", "buzzer:1", "purple", [] ],
     [ "buzzer:2", "esp:GND.2", "black", [] ],
     [ "btn1:1.l", "esp:12", "gray", [] ],
-    [ "btn1:2.l", "esp:GND.2", "black", [] ],
+    ["btn1:2.l", "esp:GND.2", "black", [] ],
     [ "btn2:1.l", "esp:13", "gray", [] ],
     [ "btn2:2.l", "esp:GND.2", "black", [] ],
     [ "btn3:1.l", "esp:14", "gray", [] ],
-    [ "btn3:2.l", "esp:GND.2", "black", [] ]
+    [ "btn3:2.l", "esp:GND.2", "black", [] ],
+    [ "esp:TX", "serial:RX", "blue", [] ],
+    [ "esp:RX", "serial:TX", "green", [] ]
   ],
   "dependencies": {}
 }
