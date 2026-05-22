@@ -103,4 +103,21 @@ export class LoadBalancerModel {
   syncUptime(uptimeMs: number): void {
     this.uptime = uptimeMs;
   }
+
+  // Sync events count from ESP32 telemetry (ESP32 is the source of truth)
+  syncEvents(events: number): void {
+    this.events = events;
+  }
+
+  // Update channel with explicit overload flag from ESP32 (respects hysteresis)
+  updateChannelFromMqtt(id: string, current: number, overload: boolean, relay: boolean): boolean {
+    const channel = this.channels.get(id);
+    if (!channel) return false;
+
+    channel.currentAmps = current;
+    channel.overload = overload;
+    channel.relayActive = relay;
+
+    return true;
+  }
 }

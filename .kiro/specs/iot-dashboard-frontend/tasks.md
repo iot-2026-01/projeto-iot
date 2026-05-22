@@ -133,8 +133,8 @@ Scaffold a Vite + React 18 + TypeScript 5 SPA in `/frontend`, wire it to the exi
     - Test: lists correct channel identifiers when some channels are overloaded
     - _Requirements: 3.2, 3.3_
 
-- [ ] 6. Implement control components
-  - [-] 6.1 Create `src/components/RelayControl.tsx`
+- [x] 6. Implement control components
+  - [x] 6.1 Create `src/components/RelayControl.tsx`
     - Props: `{ channelId: string; relayActive: boolean; disabled: boolean; onToggle: (channelId: string, newState: boolean) => Promise<void> }`
     - Manage internal `pending` boolean; disable button while request is in-flight
     - Button label: `"Connected"` when `relayActive === true` (green `button-trading-up` style), `"Disconnected"` when `false` (dark `button-secondary-on-dark` style)
@@ -142,13 +142,13 @@ Scaffold a Vite + React 18 + TypeScript 5 SPA in `/frontend`, wire it to the exi
     - Minimum tap target: 44×44 px
     - _Requirements: 5.1, 5.5, 5.6, 8.4_
 
-  - [-] 6.2 Write property test for `RelayControl`
+  - [x] 6.2 Write property test for `RelayControl`
     - **Property 6: Relay control invokes API with correct parameters**
     - **Validates: Requirements 5.2**
     - File: `src/__tests__/RelayControl.property.test.tsx`
     - Use `fc.constantFrom('A','B','C')` and `fc.boolean()` to generate `channelId` and `relayActive`; mock `onToggle`; simulate click; assert mock was called with `(channelId, !relayActive)`; set `{ numRuns: 100 }`
 
-  - [-] 6.3 Create `src/components/CurrentUpdateForm.tsx`
+  - [x] 6.3 Create `src/components/CurrentUpdateForm.tsx`
     - Props: `{ channelId: string; disabled: boolean; onSubmit: (channelId: string, current: number) => Promise<void> }`
     - Numeric input + submit button; validate with `isValidCurrent` on submit
     - Display inline validation error when value is invalid; clear error when value becomes valid
@@ -156,13 +156,13 @@ Scaffold a Vite + React 18 + TypeScript 5 SPA in `/frontend`, wire it to the exi
     - Minimum tap target for submit button: 44×44 px
     - _Requirements: 6.1, 6.3, 6.4, 6.7, 6.8, 8.4_
 
-  - [-] 6.4 Write property test for `CurrentUpdateForm`
+  - [x] 6.4 Write property test for `CurrentUpdateForm`
     - **Property 7: Channel update invokes API with correct parameters**
     - **Validates: Requirements 6.2**
     - File: `src/__tests__/CurrentUpdateForm.property.test.tsx`
     - Use `fc.constantFrom('A','B','C')` and `fc.float({ min: 0, max: 999.99 })` to generate valid inputs; mock `onSubmit`; type value into input and submit; assert mock was called with `(channelId, parsedValue)`; set `{ numRuns: 100 }`
 
-  - [-] 6.5 Write unit tests for `CurrentUpdateForm`
+  - [x] 6.5 Write unit tests for `CurrentUpdateForm`
     - File: `src/__tests__/CurrentUpdateForm.test.tsx`
     - Test: shows validation error for negative value, value > 999.99, NaN
     - Test: clears validation error when corrected to valid value
@@ -217,11 +217,11 @@ Scaffold a Vite + React 18 + TypeScript 5 SPA in `/frontend`, wire it to the exi
     - Test: relay label is `"Disconnected"` when `relayActive === false`
     - _Requirements: 2.4, 2.5, 2.7_
 
-- [~] 8. Checkpoint — Ensure all tests pass
+- [x] 8. Checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 9. Assemble `App` and implement the full layout
-  - [ ] 9.1 Create `src/components/App.tsx`
+- [x] 9. Assemble `App` and implement the full layout
+  - [x] 9.1 Create `src/components/App.tsx`
     - Call `useTelemetry()` and distribute `data`, `loading`, `error`, `connectionUnavailable`, `triggerPoll` via props
     - Implement `handleRelayChange(channelId, state)`: call `setRelay`, then `triggerPoll` on success; surface `ApiError` as action error
     - Implement `handleCurrentUpdate(channelId, current)`: call `updateChannel`, then `triggerPoll` on success; surface `ApiError` as action error
@@ -231,10 +231,10 @@ Scaffold a Vite + React 18 + TypeScript 5 SPA in `/frontend`, wire it to the exi
     - Responsive grid: `grid-cols-1 md:grid-cols-2 lg:grid-cols-3` for channel cards
     - _Requirements: 1.4, 2.6, 3.4, 5.3, 5.4, 5.5, 5.6, 5.7, 6.5, 6.6, 7.5, 7.6, 8.1, 8.2, 8.3, 9.4, 9.5_
 
-  - [~] 9.2 Update `src/main.tsx` to mount `<App />` into `#root` and import `index.css`
+  - [x] 9.2 Update `src/main.tsx` to mount `<App />` into `#root` and import `index.css`
     - _Requirements: 1.1_
 
-- [~] 10. Final checkpoint — Ensure all tests pass
+- [x] 10. Final checkpoint — Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes

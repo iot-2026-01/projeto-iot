@@ -115,12 +115,13 @@ export class MqttSubscriberService {
         continue;
       }
 
-      this.model.updateChannel(channelId, ch.current_a);
-      this.model.setRelayState(channelId, ch.relay);
+      // Use ESP32's overload flag directly (respects hysteresis logic on device)
+      this.model.updateChannelFromMqtt(channelId, ch.current_a, ch.overload, ch.relay);
     }
 
-    // Keep uptime in sync
+    // Keep uptime and events in sync (ESP32 is the source of truth)
     this.model.syncUptime(data.uptime_ms);
+    this.model.syncEvents(data.events);
 
     console.log(
       `[MQTT] Telemetry from ${data.device} | ` +
