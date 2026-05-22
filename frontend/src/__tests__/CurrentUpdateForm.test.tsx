@@ -9,47 +9,48 @@ function setup(onSubmit = vi.fn().mockResolvedValue(undefined)) {
     <CurrentUpdateForm channelId="A" disabled={false} onSubmit={onSubmit} />
   );
   const input = screen.getByRole('spinbutton');
-  const button = screen.getByRole('button', { name: /update/i });
-  return { ...utils, input, button, onSubmit };
+  const button = screen.getByRole('button', { name: /submit current update/i });
+  const form = button.closest('form')!;
+  return { ...utils, input, button, form, onSubmit };
 }
 
 // ─── Validation error tests ───────────────────────────────────────────────────
 
 describe('CurrentUpdateForm — validation errors', () => {
   it('shows a validation error when a negative value is submitted', async () => {
-    const { input, button } = setup();
+    const { input, form } = setup();
 
     await userEvent.type(input, '-1');
-    fireEvent.click(button);
+    fireEvent.submit(form);
 
     expect(await screen.findByRole('alert')).toBeInTheDocument();
   });
 
   it('shows a validation error when value exceeds 999.99', async () => {
-    const { input, button } = setup();
+    const { input, form } = setup();
 
     await userEvent.type(input, '1000');
-    fireEvent.click(button);
+    fireEvent.submit(form);
 
     expect(await screen.findByRole('alert')).toBeInTheDocument();
   });
 
   it('shows a validation error when the field contains NaN (non-numeric text)', async () => {
-    const { input, button } = setup();
+    const { input, form } = setup();
 
     // fireEvent.change bypasses the number input's native filtering so we can
     // test the component's own NaN guard.
     fireEvent.change(input, { target: { value: 'abc' } });
-    fireEvent.click(button);
+    fireEvent.submit(form);
 
     expect(await screen.findByRole('alert')).toBeInTheDocument();
   });
 
   it('does not call onSubmit when the value is invalid', async () => {
-    const { input, button, onSubmit } = setup();
+    const { input, form, onSubmit } = setup();
 
     await userEvent.type(input, '-5');
-    fireEvent.click(button);
+    fireEvent.submit(form);
 
     await screen.findByRole('alert');
     expect(onSubmit).not.toHaveBeenCalled();
@@ -60,11 +61,11 @@ describe('CurrentUpdateForm — validation errors', () => {
 
 describe('CurrentUpdateForm — error clears on valid input', () => {
   it('clears the validation error when the value is corrected to a valid number', async () => {
-    const { input, button } = setup();
+    const { input, form } = setup();
 
     // Trigger an error first
     await userEvent.type(input, '-1');
-    fireEvent.click(button);
+    fireEvent.submit(form);
     expect(await screen.findByRole('alert')).toBeInTheDocument();
 
     // Clear the field and type a valid value
@@ -76,10 +77,10 @@ describe('CurrentUpdateForm — error clears on valid input', () => {
   });
 
   it('clears the error when an out-of-range value is corrected to 0', async () => {
-    const { input, button } = setup();
+    const { input, form } = setup();
 
     await userEvent.type(input, '9999');
-    fireEvent.click(button);
+    fireEvent.submit(form);
     expect(await screen.findByRole('alert')).toBeInTheDocument();
 
     await userEvent.clear(input);
@@ -95,10 +96,10 @@ describe('CurrentUpdateForm — pending state', () => {
   it('disables the input and button while the request is in-flight', async () => {
     // onSubmit returns a promise that never resolves → keeps component in pending state
     const neverResolves = vi.fn(() => new Promise<void>(() => {}));
-    const { input, button } = setup(neverResolves);
+    const { input, form, button } = setup(neverResolves);
 
     await userEvent.type(input, '42');
-    fireEvent.click(button);
+    fireEvent.submit(form);
 
     // Wait for the pending state to be applied
     await waitFor(() => {
@@ -108,10 +109,10 @@ describe('CurrentUpdateForm — pending state', () => {
   });
 
   it('re-enables input and button after the request completes', async () => {
-    const { input, button, onSubmit } = setup();
+    const { input, form, button, onSubmit } = setup();
 
     await userEvent.type(input, '42');
-    fireEvent.click(button);
+    fireEvent.submit(form);
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
 
@@ -131,6 +132,6 @@ describe('CurrentUpdateForm — pending state', () => {
     );
 
     expect(screen.getByRole('spinbutton')).toBeDisabled();
-    expect(screen.getByRole('button', { name: /update/i })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /submit current update/i })).toBeDisabled();
   });
 });

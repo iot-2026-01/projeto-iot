@@ -17,7 +17,7 @@ describe('CurrentUpdateForm — Property 7: Channel update invokes API with corr
     await fc.assert(
       fc.asyncProperty(
         fc.constantFrom('A', 'B', 'C'),
-        fc.float({ min: 0, max: 999.99, noNaN: true }),
+        fc.double({ min: 0, max: 999.99, noNaN: true }),
         async (channelId, value) => {
           const onSubmit = vi.fn().mockResolvedValue(undefined);
           const user = userEvent.setup();

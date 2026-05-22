@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { useTelemetry } from './hooks/useTelemetry';
-import { setRelay, updateChannel, resetSystem, type ApiError } from './api/loadBalancer';
-import { ErrorBanner } from './components/ErrorBanner';
-import { TelemetryPanel } from './components/TelemetryPanel';
-import { OverloadPanel } from './components/OverloadPanel';
-import { ChannelCard } from './components/ChannelCard';
-import { ResetButton } from './components/ResetButton';
+import { useTelemetry } from '../hooks/useTelemetry';
+import { setRelay, updateChannel, resetSystem, type ApiError } from '../api/loadBalancer';
+import { ErrorBanner } from './ErrorBanner';
+import { TelemetryPanel } from './TelemetryPanel';
+import { OverloadPanel } from './OverloadPanel';
+import { ChannelCard } from './ChannelCard';
+import { ResetButton } from './ResetButton';
 
 const CHANNEL_IDS = ['A', 'B', 'C'] as const;
 

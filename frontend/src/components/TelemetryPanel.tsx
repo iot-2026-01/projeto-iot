@@ -1,4 +1,4 @@
-import { TelemetryData } from '../types';
+import type { TelemetryData } from '../types';
 import { formatUptime } from '../utils/formatUptime';
 import { formatTimestamp } from '../utils/formatTimestamp';
 
