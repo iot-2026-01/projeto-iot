@@ -110,12 +110,6 @@ export class MqttSubscriberService {
         continue;
       }
 
-      // Skip MQTT updates for channels that have been manually overridden via HTTP
-      if (this.model.isManualOverride(channelId)) {
-        continue;
-      }
-
-      // Use ESP32's overload flag directly (respects hysteresis logic on device)
       this.model.updateChannelFromMqtt(channelId, ch.current_a, ch.overload, ch.relay);
     }
 

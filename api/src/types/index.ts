@@ -3,6 +3,7 @@ export interface ChannelData {
   currentAmps: number;
   overload: boolean;
   relayActive: boolean;
+  lastOverloadAt: string | null; // ISO timestamp of last overload event, null if never overloaded
 }
 
 export interface TelemetryData {

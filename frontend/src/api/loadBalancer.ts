@@ -84,24 +84,6 @@ export async function setRelay(
   }
 }
 
-export async function updateChannel(
-  channelId: string,
-  current: number,
-  signal?: AbortSignal
-): Promise<ChannelData> {
-  try {
-    const response = await fetch('/api/load-balancer/channels', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ channelId, current }),
-      signal,
-    });
-    return handleResponse<ChannelData>(response);
-  } catch (err) {
-    throw classifyError(err);
-  }
-}
-
 export async function resetSystem(signal?: AbortSignal): Promise<void> {
   try {
     const response = await fetch('/api/load-balancer/reset', {

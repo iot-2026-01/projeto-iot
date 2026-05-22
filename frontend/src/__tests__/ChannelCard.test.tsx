@@ -8,6 +8,7 @@ const baseChannel: ChannelData = {
   currentAmps: 5.0,
   overload: false,
   relayActive: true,
+  lastOverloadAt: null,
 };
 
 // ─── Null channel ─────────────────────────────────────────────────────────────
@@ -19,7 +20,6 @@ describe('ChannelCard — null channel', () => {
         channel={null}
         disabled={false}
         onRelayChange={vi.fn()}
-        onCurrentUpdate={vi.fn()}
       />
     );
 
@@ -36,7 +36,6 @@ describe('ChannelCard — relay label', () => {
         channel={{ ...baseChannel, relayActive: true }}
         disabled={false}
         onRelayChange={vi.fn()}
-        onCurrentUpdate={vi.fn()}
       />
     );
 
@@ -49,10 +48,39 @@ describe('ChannelCard — relay label', () => {
         channel={{ ...baseChannel, relayActive: false }}
         disabled={false}
         onRelayChange={vi.fn()}
-        onCurrentUpdate={vi.fn()}
       />
     );
 
     expect(screen.getByText('Disconnected')).toBeInTheDocument();
+  });
+});
+
+// ─── Overload-free uptime ─────────────────────────────────────────────────────
+
+describe('ChannelCard — overload-free uptime', () => {
+  it('shows "No overloads recorded" when lastOverloadAt is null', () => {
+    render(
+      <ChannelCard
+        channel={{ ...baseChannel, lastOverloadAt: null }}
+        disabled={false}
+        onRelayChange={vi.fn()}
+      />
+    );
+
+    expect(screen.getByText('No overloads recorded')).toBeInTheDocument();
+  });
+
+  it('shows time since last overload when lastOverloadAt is set', () => {
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+    render(
+      <ChannelCard
+        channel={{ ...baseChannel, lastOverloadAt: fiveMinutesAgo }}
+        disabled={false}
+        onRelayChange={vi.fn()}
+      />
+    );
+
+    // Should show something like "5m 0s without overloads"
+    expect(screen.getByText(/without overloads/)).toBeInTheDocument();
   });
 });

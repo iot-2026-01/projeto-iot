@@ -1,15 +1,14 @@
 import type { ChannelData } from '../types';
 import { RelayControl } from './RelayControl';
-import { CurrentUpdateForm } from './CurrentUpdateForm';
+import { OverloadFreeUptime } from './OverloadFreeUptime';
 
 interface ChannelCardProps {
   channel: ChannelData | null;
   disabled: boolean;
   onRelayChange: (channelId: string, state: boolean) => Promise<void>;
-  onCurrentUpdate: (channelId: string, current: number) => Promise<void>;
 }
 
-export function ChannelCard({ channel, disabled, onRelayChange, onCurrentUpdate }: ChannelCardProps) {
+export function ChannelCard({ channel, disabled, onRelayChange }: ChannelCardProps) {
   if (channel === null) {
     return (
       <div className="bg-surface-card rounded-xl p-6 border-l-4 border-hairline-dark">
@@ -50,7 +49,7 @@ export function ChannelCard({ channel, disabled, onRelayChange, onCurrentUpdate 
         {channel.currentAmps.toFixed(2)}A
       </p>
 
-      {/* Controls */}
+      {/* Controls and info */}
       <div className="flex flex-col gap-4">
         <RelayControl
           channelId={channel.channel}
@@ -58,11 +57,7 @@ export function ChannelCard({ channel, disabled, onRelayChange, onCurrentUpdate 
           disabled={disabled}
           onToggle={onRelayChange}
         />
-        <CurrentUpdateForm
-          channelId={channel.channel}
-          disabled={disabled}
-          onSubmit={onCurrentUpdate}
-        />
+        <OverloadFreeUptime lastOverloadAt={channel.lastOverloadAt} />
       </div>
     </div>
   );

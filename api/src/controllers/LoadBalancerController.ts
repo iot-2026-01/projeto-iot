@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { LoadBalancerModel } from '../models/LoadBalancerModel';
-import { ChannelData, TelemetryData } from '../types';
 
 export class LoadBalancerController {
   private model: LoadBalancerModel;
@@ -34,49 +33,6 @@ export class LoadBalancerController {
     } catch (error) {
       return res.status(500).json({ 
         error: 'Failed to retrieve channel data',
-        details: (error as Error).message 
-      });
-    }
-  }
-
-  /**
-   * Update channel data
-   */
-  async updateChannel(req: Request, res: Response): Promise<Response> {
-    try {
-      const { channelId, current } = req.body;
-      
-      // Validate channel ID - should be A, B, or C
-      const validChannels = ['A', 'B', 'C'];
-      if (!validChannels.includes(channelId)) {
-        return res.status(400).json({ 
-          error: 'Invalid channel ID. Must be A, B, or C' 
-        });
-      }
-
-      if (typeof current !== 'number' || current < 0) {
-        return res.status(400).json({ 
-          error: 'Invalid current value. Must be a positive number' 
-        });
-      }
-
-      const success = this.model.updateChannel(channelId, current);
-      
-      if (!success) {
-        return res.status(400).json({ 
-          error: 'Failed to update channel data' 
-        });
-      }
-      
-      // Mark channel as manually overridden to protect from MQTT overwrites
-      this.model.setManualOverride(channelId);
-      
-      // Return updated channel data as plain ChannelData
-      const channel = this.model.getChannel(channelId);
-      return res.status(200).json(channel);
-    } catch (error) {
-      return res.status(500).json({ 
-        error: 'Failed to update channel data',
         details: (error as Error).message 
       });
     }

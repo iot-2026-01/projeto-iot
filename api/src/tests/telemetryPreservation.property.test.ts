@@ -101,6 +101,7 @@ describe('Preservation - Non-Overridden MQTT Updates and Reset Behavior', () => 
             expect(ch.currentAmps).toBe(0);
             expect(ch.overload).toBe(false);
             expect(ch.relayActive).toBe(true);
+            expect(ch.lastOverloadAt).toBeNull();
           }
 
           // Assert: events reset to 0

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTelemetry } from '../hooks/useTelemetry';
-import { setRelay, updateChannel, resetSystem, type ApiError } from '../api/loadBalancer';
+import { setRelay, resetSystem, type ApiError } from '../api/loadBalancer';
 import { ErrorBanner } from './ErrorBanner';
 import { TelemetryPanel } from './TelemetryPanel';
 import { OverloadPanel } from './OverloadPanel';
@@ -21,17 +21,6 @@ function App() {
       const apiErr = err as ApiError;
       const statusPart = apiErr.status !== undefined ? ` (${apiErr.status})` : '';
       setActionError(`Relay error — Channel ${channelId}:${statusPart} ${apiErr.message}`);
-    }
-  }
-
-  async function handleCurrentUpdate(channelId: string, current: number): Promise<void> {
-    try {
-      await updateChannel(channelId, current);
-      triggerPoll();
-    } catch (err) {
-      const apiErr = err as ApiError;
-      const statusPart = apiErr.status !== undefined ? ` (${apiErr.status})` : '';
-      setActionError(`Update error — Channel ${channelId}:${statusPart} ${apiErr.message}`);
     }
   }
 
@@ -95,7 +84,6 @@ function App() {
                 channel={channelData}
                 disabled={controlsDisabled}
                 onRelayChange={handleRelayChange}
-                onCurrentUpdate={handleCurrentUpdate}
               />
             );
           })}

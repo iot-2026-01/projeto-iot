@@ -28,11 +28,6 @@ export class LoadBalancerRoutes {
       this.controller.getChannels(req, res)
     );
 
-    // POST /channels - Update channel data
-    this.router.post('/channels', (req, res) =>
-      this.controller.updateChannel(req, res)
-    );
-
     // POST /relay - Set relay state for a channel
     this.router.post('/relay', (req, res) =>
       this.controller.setRelay(req, res)

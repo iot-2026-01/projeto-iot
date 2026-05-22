@@ -1,56 +1,36 @@
 import fc from 'fast-check';
 import { LoadBalancerModel } from '../models/LoadBalancerModel';
-import { LoadBalancerController } from '../controllers/LoadBalancerController';
-import { Request, Response } from 'express';
 
 /**
- * Bug Condition Exploration Tests
+ * Telemetry Tests
  *
- * These tests encode the EXPECTED (correct) behavior. They are designed to FAIL
- * on unfixed code, proving the bugs exist. Once the fix is implemented, these
- * tests will pass.
- *
- * Validates: Requirements 1.1, 1.2, 1.3, 1.4
+ * These tests validate the telemetry model behavior after the removal of
+ * the manual override / HTTP update feature. MQTT is now the sole source
+ * of truth for channel data.
  */
 
-describe('Bug Condition Exploration - Telemetry Overwrite', () => {
+describe('Telemetry Model', () => {
   /**
-   * Test 1 - Manual Override Protection
+   * Test 1 - MQTT updates always apply
    *
-   * Property: For any channel that receives an HTTP update followed by an MQTT update,
-   * the HTTP-set value must be preserved (MQTT must not overwrite it).
-   *
-   * On UNFIXED code, the second updateChannel call (simulating MQTT) will overwrite
-   * the first (simulating HTTP), causing the assertion to fail.
-   *
-   * **Validates: Requirements 1.1, 1.2**
+   * Property: For any channel that receives an MQTT update, the value is always stored.
    */
-  it('should preserve HTTP-set channel value after MQTT update (manual override protection)', () => {
+  it('should always apply MQTT updates to channel data', () => {
     fc.assert(
       fc.property(
         fc.constantFrom('A', 'B', 'C'),
         fc.float({ min: 0, max: 30, noNaN: true }),
-        fc.float({ min: 0, max: 30, noNaN: true }),
-        (channelId, httpCurrent, mqttCurrent) => {
-          // Ensure HTTP and MQTT values are different to make the test meaningful
-          fc.pre(Math.abs(httpCurrent - mqttCurrent) > 0.01);
-
+        fc.boolean(),
+        fc.boolean(),
+        (channelId, current, overload, relay) => {
           const model = new LoadBalancerModel('test-device');
 
-          // Step 1: Simulate HTTP update (user sets channel via "Set" button)
-          // The controller calls updateChannel then setManualOverride
-          model.updateChannel(channelId, httpCurrent);
-          model.setManualOverride(channelId);
+          model.updateChannelFromMqtt(channelId, current, overload, relay);
 
-          // Step 2: Simulate MQTT update (sensor reading arrives ~1 second later)
-          // MQTT should check isManualOverride before updating
-          if (!model.isManualOverride(channelId)) {
-            model.updateChannel(channelId, mqttCurrent);
-          }
-
-          // Assert: The HTTP-set value must be preserved (MQTT should NOT overwrite)
           const channel = model.getChannel(channelId);
-          expect(channel!.currentAmps).toBe(httpCurrent);
+          expect(channel!.currentAmps).toBe(current);
+          expect(channel!.overload).toBe(overload);
+          expect(channel!.relayActive).toBe(relay);
         }
       ),
       { numRuns: 100 }
@@ -62,68 +42,64 @@ describe('Bug Condition Exploration - Telemetry Overwrite', () => {
    *
    * Property: getTelemetry() must return a response containing a `timestamp` field
    * that is a valid Date.
-   *
-   * On UNFIXED code, getTelemetry() returns Omit<TelemetryData, 'timestamp'>,
-   * so the timestamp field will be undefined.
-   *
-   * **Validates: Requirements 1.3**
    */
   it('should include a valid timestamp in telemetry response', () => {
     const model = new LoadBalancerModel('test-device');
 
     const telemetry = model.getTelemetry() as any;
 
-    // Assert: timestamp field must exist and be a valid Date
     expect(telemetry.timestamp).toBeDefined();
     const date = new Date(telemetry.timestamp);
     expect(date.toString()).not.toBe('Invalid Date');
   });
 
   /**
-   * Test 3 - Response Shape
+   * Test 3 - lastOverloadAt tracking
    *
-   * Property: The updateChannel controller method must return a plain ChannelData
-   * object (with channel, currentAmps, overload, relayActive at top level)
-   * WITHOUT a `success` wrapper.
-   *
-   * On UNFIXED code, the controller returns { success: true, channel: {...} }
-   * instead of the flat ChannelData object.
-   *
-   * **Validates: Requirements 1.4**
+   * Property: When a channel transitions from non-overload to overload via MQTT,
+   * lastOverloadAt is set to a valid ISO timestamp.
    */
-  it('should return plain ChannelData from updateChannel without success wrapper', async () => {
+  it('should set lastOverloadAt when channel enters overload via MQTT', () => {
+    fc.assert(
+      fc.property(
+        fc.constantFrom('A', 'B', 'C'),
+        fc.float({ min: Math.fround(15.01), max: 30, noNaN: true }),
+        (channelId, current) => {
+          const model = new LoadBalancerModel('test-device');
+
+          // Channel starts without overload
+          expect(model.getChannel(channelId)!.lastOverloadAt).toBeNull();
+
+          // MQTT reports overload
+          model.updateChannelFromMqtt(channelId, current, true, false);
+
+          const channel = model.getChannel(channelId);
+          expect(channel!.lastOverloadAt).not.toBeNull();
+          const date = new Date(channel!.lastOverloadAt!);
+          expect(date.toString()).not.toBe('Invalid Date');
+        }
+      ),
+      { numRuns: 100 }
+    );
+  });
+
+  /**
+   * Test 4 - lastOverloadAt preserved when already overloaded
+   *
+   * Property: If a channel is already in overload, subsequent MQTT updates
+   * with overload=true should NOT update lastOverloadAt (it tracks the start).
+   */
+  it('should not update lastOverloadAt on subsequent overload MQTT messages', () => {
     const model = new LoadBalancerModel('test-device');
-    const controller = new LoadBalancerController(model);
 
-    // Mock Express request
-    const req = {
-      body: { channelId: 'A', current: 10 }
-    } as Request;
+    // First overload
+    model.updateChannelFromMqtt('A', 20, true, false);
+    const firstTimestamp = model.getChannel('A')!.lastOverloadAt;
 
-    // Mock Express response
-    let responseBody: any = null;
-    let statusCode: number = 0;
-    const res = {
-      status: (code: number) => {
-        statusCode = code;
-        return res;
-      },
-      json: (body: any) => {
-        responseBody = body;
-        return res;
-      }
-    } as unknown as Response;
+    // Small delay to ensure timestamps would differ
+    model.updateChannelFromMqtt('A', 22, true, false);
+    const secondTimestamp = model.getChannel('A')!.lastOverloadAt;
 
-    await controller.updateChannel(req, res);
-
-    // Assert: Response should be a plain ChannelData object at top level
-    expect(statusCode).toBe(200);
-    expect(responseBody).toHaveProperty('channel');
-    expect(responseBody).toHaveProperty('currentAmps');
-    expect(responseBody).toHaveProperty('overload');
-    expect(responseBody).toHaveProperty('relayActive');
-
-    // Assert: Response should NOT have a `success` wrapper
-    expect(responseBody).not.toHaveProperty('success');
+    expect(secondTimestamp).toBe(firstTimestamp);
   });
 });

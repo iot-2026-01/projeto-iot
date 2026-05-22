@@ -15,17 +15,16 @@ describe('Property 3: ChannelCard renders all fields correctly', () => {
           currentAmps: fc.float({ min: 0, max: 30 }),
           overload: fc.boolean(),
           relayActive: fc.boolean(),
+          lastOverloadAt: fc.oneof(fc.constant(null), fc.constant('2024-01-15T10:00:00.000Z')),
         }),
         (channelData) => {
           const onRelayChange = vi.fn().mockResolvedValue(undefined);
-          const onCurrentUpdate = vi.fn().mockResolvedValue(undefined);
 
           const { container, unmount } = render(
             <ChannelCard
               channel={channelData}
               disabled={false}
               onRelayChange={onRelayChange}
-              onCurrentUpdate={onCurrentUpdate}
             />
           );
 

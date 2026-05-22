@@ -5,18 +5,12 @@ export class LoadBalancerModel {
   private channels: Map<string, ChannelData>;
   private events: number;
   private uptime: number;
-  private manualOverrides: Map<string, boolean>;
   constructor(deviceId: string) {
     this.deviceId = deviceId;
     this.channels = new Map([
-      ['A', { channel: 'A', currentAmps: 0, overload: false, relayActive: true }],
-      ['B', { channel: 'B', currentAmps: 0, overload: false, relayActive: true }],
-      ['C', { channel: 'C', currentAmps: 0, overload: false, relayActive: true }]
-    ]);
-    this.manualOverrides = new Map([
-      ['A', false],
-      ['B', false],
-      ['C', false]
+      ['A', { channel: 'A', currentAmps: 0, overload: false, relayActive: true, lastOverloadAt: null }],
+      ['B', { channel: 'B', currentAmps: 0, overload: false, relayActive: true, lastOverloadAt: null }],
+      ['C', { channel: 'C', currentAmps: 0, overload: false, relayActive: true, lastOverloadAt: null }]
     ]);
     this.events = 0;
     this.uptime = 0;
@@ -42,20 +36,13 @@ export class LoadBalancerModel {
     channel.currentAmps = current;
     channel.overload = overload;
 
-    // Update events if new overload detected
+    // Track when overload starts
     if (newOverload) {
+      channel.lastOverloadAt = new Date().toISOString();
       this.events += 1;
     }
 
     return true;
-  }
-
-  setManualOverride(channelId: string): void {
-    this.manualOverrides.set(channelId, true);
-  }
-
-  isManualOverride(channelId: string): boolean {
-    return this.manualOverrides.get(channelId) ?? false;
   }
 
   setRelayState(channelId: string, state: boolean): boolean {
@@ -73,11 +60,7 @@ export class LoadBalancerModel {
       channel.currentAmps = 0;
       channel.overload = false;
       channel.relayActive = true; // Default to ON
-    });
-
-    // Clear all manual override flags
-    this.manualOverrides.forEach((_, key) => {
-      this.manualOverrides.set(key, false);
+      channel.lastOverloadAt = null;
     });
 
     this.events = 0;
@@ -113,6 +96,11 @@ export class LoadBalancerModel {
   updateChannelFromMqtt(id: string, current: number, overload: boolean, relay: boolean): boolean {
     const channel = this.channels.get(id);
     if (!channel) return false;
+
+    // Track when overload starts
+    if (overload && !channel.overload) {
+      channel.lastOverloadAt = new Date().toISOString();
+    }
 
     channel.currentAmps = current;
     channel.overload = overload;
