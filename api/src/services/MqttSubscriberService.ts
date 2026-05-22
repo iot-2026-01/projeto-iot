@@ -110,6 +110,11 @@ export class MqttSubscriberService {
         continue;
       }
 
+      // Skip MQTT updates for channels that have been manually overridden via HTTP
+      if (this.model.isManualOverride(channelId)) {
+        continue;
+      }
+
       this.model.updateChannel(channelId, ch.current_a);
       this.model.setRelayState(channelId, ch.relay);
     }

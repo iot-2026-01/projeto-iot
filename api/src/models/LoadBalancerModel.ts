@@ -5,12 +5,18 @@ export class LoadBalancerModel {
   private channels: Map<string, ChannelData>;
   private events: number;
   private uptime: number;
+  private manualOverrides: Map<string, boolean>;
   constructor(deviceId: string) {
     this.deviceId = deviceId;
     this.channels = new Map([
       ['A', { channel: 'A', currentAmps: 0, overload: false, relayActive: true }],
       ['B', { channel: 'B', currentAmps: 0, overload: false, relayActive: true }],
       ['C', { channel: 'C', currentAmps: 0, overload: false, relayActive: true }]
+    ]);
+    this.manualOverrides = new Map([
+      ['A', false],
+      ['B', false],
+      ['C', false]
     ]);
     this.events = 0;
     this.uptime = 0;
@@ -44,6 +50,14 @@ export class LoadBalancerModel {
     return true;
   }
 
+  setManualOverride(channelId: string): void {
+    this.manualOverrides.set(channelId, true);
+  }
+
+  isManualOverride(channelId: string): boolean {
+    return this.manualOverrides.get(channelId) ?? false;
+  }
+
   setRelayState(channelId: string, state: boolean): boolean {
     const channel = this.channels.get(channelId);
     if (!channel) return false;
@@ -61,16 +75,22 @@ export class LoadBalancerModel {
       channel.relayActive = true; // Default to ON
     });
 
+    // Clear all manual override flags
+    this.manualOverrides.forEach((_, key) => {
+      this.manualOverrides.set(key, false);
+    });
+
     this.events = 0;
     this.uptime = 0;
   }
 
-  getTelemetry(): Omit<TelemetryData, 'timestamp'> {
+  getTelemetry(): Omit<TelemetryData, 'timestamp'> & { timestamp: string } {
     return {
       device: this.deviceId,
       uptime: this.uptime,
       events: this.events,
-      channels: Array.from(this.channels.values())
+      channels: Array.from(this.channels.values()),
+      timestamp: new Date().toISOString()
     };
   }
 

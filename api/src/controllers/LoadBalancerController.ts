@@ -68,12 +68,12 @@ export class LoadBalancerController {
         });
       }
       
-      // Return updated channel data
+      // Mark channel as manually overridden to protect from MQTT overwrites
+      this.model.setManualOverride(channelId);
+      
+      // Return updated channel data as plain ChannelData
       const channel = this.model.getChannel(channelId);
-      return res.status(200).json({ 
-        success: true,
-        channel: channel
-      });
+      return res.status(200).json(channel);
     } catch (error) {
       return res.status(500).json({ 
         error: 'Failed to update channel data',
