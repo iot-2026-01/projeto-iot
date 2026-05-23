@@ -62,7 +62,7 @@ const float   AMPS_PER_COUNT = 0.0293f;
 #endif
 
 // ── Calibration ──────────────────────────────────────────────
-const float OVERLOAD_THRESHOLD = 15.0;
+const float OVERLOAD_THRESHOLD = 10.0;
 const float HYSTERESIS         = 1.5;
 
 // ── Sampling ─────────────────────────────────────────────────

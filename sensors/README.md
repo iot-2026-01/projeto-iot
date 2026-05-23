@@ -175,7 +175,7 @@ Ch,Current_A,Overload,Relay
 
 No início de `sketch.ino` é possível alterar:
 
-- `OVERLOAD_THRESHOLD` — limiar de sobrecarga (padrão: 15 A)
+- `OVERLOAD_THRESHOLD` — limiar de sobrecarga (padrão: 10 A)
 - `HYSTERESIS` — margem para sair da sobrecarga (padrão: 1,5 A)
 - `AMPS_PER_COUNT` — fator de conversão ADC → amperes
 - `SAMPLES` / `SAMPLE_INTERVAL_US` — precisão e tempo da medição RMS

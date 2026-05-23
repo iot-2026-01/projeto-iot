@@ -123,7 +123,7 @@ The primary system agent is responsible for:
 ## Configuration Parameters
 
 ### Adjustable Values in Firmware:
-1. OVERLOAD_THRESHOLD - Default 15A
+1. OVERLOAD_THRESHOLD - Default 10A
 2. HYSTERESIS - Default 1.5A  
 3. AMPS_PER_COUNT - Conversion factor
 4. SAMPLES / SAMPLE_INTERVAL_US - Measurement precision
