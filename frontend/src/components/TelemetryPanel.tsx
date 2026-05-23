@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import type { TelemetryData } from '../types';
 import { formatUptime } from '../utils/formatUptime';
 import { formatTimestamp } from '../utils/formatTimestamp';
@@ -10,6 +11,7 @@ interface TelemetryPanelProps {
 const PLACEHOLDER = '—';
 
 export function TelemetryPanel({ data, loading }: TelemetryPanelProps) {
+  const { t } = useTranslation();
   const isPlaceholder = loading && data === null;
 
   const deviceId = isPlaceholder ? PLACEHOLDER : (data?.device ?? PLACEHOLDER);
@@ -19,12 +21,12 @@ export function TelemetryPanel({ data, loading }: TelemetryPanelProps) {
 
   return (
     <div className="bg-surface-card rounded-xl p-6">
-      <h2 className="text-base font-semibold text-text-body mb-4">Telemetry</h2>
+      <h2 className="text-base font-semibold text-text-body mb-4">{t('telemetry.title')}</h2>
 
       <dl className="grid grid-cols-2 gap-x-6 gap-y-3">
         <div>
           <dt className="text-xs font-medium text-text-muted uppercase tracking-wide">
-            Device ID
+            {t('telemetry.deviceId')}
           </dt>
           <dd className="mt-1 text-sm text-text-body font-mono">
             {deviceId}
@@ -33,7 +35,7 @@ export function TelemetryPanel({ data, loading }: TelemetryPanelProps) {
 
         <div>
           <dt className="text-xs font-medium text-text-muted uppercase tracking-wide">
-            Uptime
+            {t('telemetry.uptime')}
           </dt>
           <dd className="mt-1 text-sm text-text-body font-mono">
             {uptime}
@@ -42,7 +44,7 @@ export function TelemetryPanel({ data, loading }: TelemetryPanelProps) {
 
         <div>
           <dt className="text-xs font-medium text-text-muted uppercase tracking-wide">
-            Events
+            {t('telemetry.events')}
           </dt>
           <dd className="mt-1 text-sm text-text-body font-mono">
             {events}
@@ -51,7 +53,7 @@ export function TelemetryPanel({ data, loading }: TelemetryPanelProps) {
 
         <div>
           <dt className="text-xs font-medium text-text-muted uppercase tracking-wide">
-            Last Updated
+            {t('telemetry.lastUpdated')}
           </dt>
           <dd className="mt-1 text-sm text-text-body font-mono">
             {timestamp}

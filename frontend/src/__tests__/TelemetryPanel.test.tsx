@@ -11,9 +11,9 @@ const mockData: TelemetryData = {
   uptime: 3661,
   events: 42,
   channels: [
-    { channel: 'A', currentAmps: 5.5, overload: false, relayActive: true },
-    { channel: 'B', currentAmps: 12.3, overload: false, relayActive: true },
-    { channel: 'C', currentAmps: 3.1, overload: false, relayActive: true },
+    { channel: 'A', currentAmps: 5.5, overload: false, relayActive: true, lastOverloadAt: null },
+    { channel: 'B', currentAmps: 12.3, overload: false, relayActive: true, lastOverloadAt: null },
+    { channel: 'C', currentAmps: 3.1, overload: false, relayActive: true, lastOverloadAt: null },
   ],
   timestamp: new Date('2024-01-15T10:00:00Z'),
 };

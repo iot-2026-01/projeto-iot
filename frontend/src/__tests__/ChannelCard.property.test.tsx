@@ -5,6 +5,7 @@
 import { render, screen } from '@testing-library/react';
 import * as fc from 'fast-check';
 import { ChannelCard } from '../components/ChannelCard';
+import i18n from '../i18n';
 
 describe('Property 3: ChannelCard renders all fields correctly', () => {
   it('displays channel identifier, formatted current, correct data-overload attribute, and relay label for any ChannelData', () => {
@@ -28,9 +29,10 @@ describe('Property 3: ChannelCard renders all fields correctly', () => {
             />
           );
 
-          // Requirement 2.1: channel identifier is visible
+          // Requirement 2.1: channel identifier is visible (uses i18n translation)
+          const expectedTitle = i18n.t('channel.title', { id: channelData.channel });
           expect(
-            screen.getByText(`Channel ${channelData.channel}`)
+            screen.getByText(expectedTitle)
           ).toBeInTheDocument();
 
           // Requirement 2.2: current formatted to 2 decimal places + "A"
@@ -43,10 +45,10 @@ describe('Property 3: ChannelCard renders all fields correctly', () => {
             channelData.overload ? 'true' : 'false'
           );
 
-          // Requirements 2.4, 2.5: relay label matches relayActive
+          // Requirements 2.4, 2.5: relay label matches relayActive (uses i18n translation)
           const expectedRelayLabel = channelData.relayActive
-            ? 'Connected'
-            : 'Disconnected';
+            ? i18n.t('relay.connected')
+            : i18n.t('relay.disconnected');
           expect(screen.getByText(expectedRelayLabel)).toBeInTheDocument();
 
           unmount();

@@ -5,6 +5,7 @@
 import { render, screen } from '@testing-library/react';
 import * as fc from 'fast-check';
 import { OverloadPanel } from '../components/OverloadPanel';
+import i18n from '../i18n';
 
 describe('Property 4: OverloadPanel lists exactly the overloaded channels', () => {
   it('renders the correct overload list for any channel array', () => {
@@ -16,6 +17,7 @@ describe('Property 4: OverloadPanel lists exactly the overloaded channels', () =
             currentAmps: fc.float({ min: 0, max: 30 }),
             overload: fc.boolean(),
             relayActive: fc.boolean(),
+            lastOverloadAt: fc.constantFrom(null, '2024-01-15T10:00:00Z'),
           })
         ),
         (channels) => {
@@ -24,19 +26,17 @@ describe('Property 4: OverloadPanel lists exactly the overloaded channels', () =
           const overloaded = channels.filter((c) => c.overload);
 
           if (overloaded.length === 0) {
-            expect(screen.getByText('All channels normal')).toBeInTheDocument();
+            expect(screen.getByText(i18n.t('overload.allNormal'))).toBeInTheDocument();
           } else {
-            // Check count message
-            const countText =
-              overloaded.length === 1
-                ? '1 channel in overload'
-                : `${overloaded.length} channels in overload`;
+            // Check count message (uses i18n translation with interpolation)
+            const countText = i18n.t('overload.channelsInOverload', { count: overloaded.length });
             expect(screen.getByText(countText)).toBeInTheDocument();
 
             // Check each overloaded channel identifier is listed
             for (const ch of overloaded) {
+              const channelLabel = i18n.t('overload.channelLabel', { id: ch.channel });
               expect(
-                screen.getAllByText(`Channel ${ch.channel}`).length
+                screen.getAllByText(channelLabel).length
               ).toBeGreaterThan(0);
             }
           }

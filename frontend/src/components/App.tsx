@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTelemetry } from '../hooks/useTelemetry';
 import { setRelay, resetSystem, type ApiError } from '../api/loadBalancer';
 import { ErrorBanner } from './ErrorBanner';
@@ -6,10 +7,12 @@ import { TelemetryPanel } from './TelemetryPanel';
 import { OverloadPanel } from './OverloadPanel';
 import { ChannelCard } from './ChannelCard';
 import { ResetButton } from './ResetButton';
+import { LanguageSelector } from './LanguageSelector';
 
 const CHANNEL_IDS = ['A', 'B', 'C'] as const;
 
 function App() {
+  const { t } = useTranslation();
   const { data, loading, error, connectionUnavailable, triggerPoll } = useTelemetry();
   const [actionError, setActionError] = useState<string | null>(null);
 
@@ -45,8 +48,11 @@ function App() {
       {/* Header bar */}
       <header className="bg-canvas-dark h-16 flex items-center px-4 border-b border-hairline-dark">
         <h1 className="text-brand-yellow text-lg font-semibold tracking-wide">
-          IoT Dashboard
+          {t('header.title')}
         </h1>
+        <div className="ml-auto">
+          <LanguageSelector />
+        </div>
       </header>
 
       {/* Error banners */}

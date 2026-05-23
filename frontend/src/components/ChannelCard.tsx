@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import type { ChannelData } from '../types';
 import { RelayControl } from './RelayControl';
 import { OverloadFreeUptime } from './OverloadFreeUptime';
@@ -9,10 +10,12 @@ interface ChannelCardProps {
 }
 
 export function ChannelCard({ channel, disabled, onRelayChange }: ChannelCardProps) {
+  const { t } = useTranslation();
+
   if (channel === null) {
     return (
       <div className="bg-surface-card rounded-xl p-6 border-l-4 border-hairline-dark">
-        <p className="text-text-muted text-sm">Data unavailable</p>
+        <p className="text-text-muted text-sm">{t('channel.dataUnavailable')}</p>
       </div>
     );
   }
@@ -30,11 +33,11 @@ export function ChannelCard({ channel, disabled, onRelayChange }: ChannelCardPro
       {/* Header: channel identifier + overload badge */}
       <div className="flex items-center gap-3 mb-4">
         <h2 className="text-xl font-semibold text-text-body">
-          Channel {channel.channel}
+          {t('channel.title', { id: channel.channel })}
         </h2>
         {isOverloaded && (
           <span className="text-xs font-medium text-trading-down uppercase tracking-wide">
-            OVERLOAD
+            {t('channel.status.overload')}
           </span>
         )}
       </div>

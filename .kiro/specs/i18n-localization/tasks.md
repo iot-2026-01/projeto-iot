@@ -6,7 +6,7 @@ This plan implements internationalization (i18n) for the IoT Dashboard frontend 
 
 ## Tasks
 
-- [ ] 1. Install dependencies and set up i18n infrastructure
+- [x] 1. Install dependencies and set up i18n infrastructure
   - [x] 1.1 Install react-i18next and i18next packages
     - Run `npm install i18next react-i18next` in the frontend directory
     - Verify packages are added to `package.json` dependencies
@@ -17,17 +17,17 @@ This plan implements internationalization (i18n) for the IoT Dashboard frontend 
     - Follow the interface defined in the design document
     - _Requirements: 1.1, 5.1_
 
-  - [ ] 1.3 Create Brazilian Portuguese translation file
+  - [x] 1.3 Create Brazilian Portuguese translation file
     - Create `src/i18n/locales/pt-BR.json` with all translation keys covering: header, telemetry, overload, channel, relay, uptimeFree, reset, confirm, and error namespaces
     - Include interpolation placeholders (e.g., `{{count}}`, `{{id}}`, `{{message}}`, `{{time}}`, `{{channel}}`, `{{state}}`) where dynamic values are needed
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 6.1_
 
-  - [ ] 1.4 Create English translation file
+  - [x] 1.4 Create English translation file
     - Create `src/i18n/locales/en.json` with the same key structure as pt-BR.json, translated to English
     - Ensure identical key set to pt-BR.json
     - _Requirements: 3.1, 3.2, 6.1, 6.2_
 
-  - [ ] 1.5 Create i18next configuration and initialization
+  - [x] 1.5 Create i18next configuration and initialization
     - Create `src/i18n/index.ts` with i18next initialization using `initReactI18next` plugin
     - Implement `getPersistedLocale()` that reads from localStorage with graceful fallback to `pt-BR`
     - Implement `persistLocale()` that writes to localStorage with try/catch
@@ -35,12 +35,12 @@ This plan implements internationalization (i18n) for the IoT Dashboard frontend 
     - Register `languageChanged` event to persist locale
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.7, 5.1, 5.2, 5.3, 5.4_
 
-  - [ ] 1.6 Import i18n initialization in main.tsx
+  - [x] 1.6 Import i18n initialization in main.tsx
     - Add `import './i18n'` at the top of `src/main.tsx` (before App import) to ensure i18next initializes before rendering
     - _Requirements: 1.1, 1.2_
 
-- [ ] 2. Implement LanguageSelector component and integrate into App
-  - [ ] 2.1 Create LanguageSelector component
+- [x] 2. Implement LanguageSelector component and integrate into App
+  - [x] 2.1 Create LanguageSelector component
     - Create `src/components/LanguageSelector.tsx` with a `<select>` element
     - Use `useTranslation()` hook to access `i18n.language` and `i18n.changeLanguage`
     - Render all `SUPPORTED_LOCALES` as `<option>` elements with native language names from `LOCALE_LABELS`
@@ -48,119 +48,119 @@ This plan implements internationalization (i18n) for the IoT Dashboard frontend 
     - Style consistently with existing dashboard header
     - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
 
-  - [ ] 2.2 Integrate LanguageSelector into App header
+  - [x] 2.2 Integrate LanguageSelector into App header
     - Import and render `<LanguageSelector />` in the App header alongside the title
     - Import `useTranslation` hook in App and replace hardcoded "IoT Dashboard" with `t('header.title')`
     - _Requirements: 4.1, 2.3_
 
-- [ ] 3. Checkpoint - Verify i18n infrastructure works
+- [x] 3. Checkpoint - Verify i18n infrastructure works
   - Ensure the app builds successfully with `npm run build`, ask the user if questions arise.
 
-- [ ] 4. Migrate existing components to use translation function
-  - [ ] 4.1 Migrate TelemetryPanel component
+- [x] 4. Migrate existing components to use translation function
+  - [x] 4.1 Migrate TelemetryPanel component
     - Import `useTranslation` and replace hardcoded strings: "Telemetry", "Device ID", "Uptime", "Events", "Last Updated" with `t()` calls using keys `telemetry.title`, `telemetry.deviceId`, `telemetry.uptime`, `telemetry.events`, `telemetry.lastUpdated`
     - _Requirements: 2.3, 3.2, 6.1_
 
-  - [ ] 4.2 Migrate OverloadPanel component
+  - [x] 4.2 Migrate OverloadPanel component
     - Replace "Overload Status", "All channels normal", channel count text, and "Channel X" with `t()` calls
     - Use interpolation for dynamic count: `t('overload.channelsInOverload', { count })` and channel label: `t('overload.channelLabel', { id })`
     - _Requirements: 2.3, 2.4, 3.2, 3.3, 6.1_
 
-  - [ ] 4.3 Migrate ChannelCard component
+  - [x] 4.3 Migrate ChannelCard component
     - Replace "Data unavailable", "Channel X", "OVERLOAD" with `t()` calls
     - Use interpolation for channel title: `t('channel.title', { id: channel.channel })`
     - _Requirements: 2.3, 2.4, 3.2, 3.3, 6.1_
 
-  - [ ] 4.4 Migrate ErrorBanner component
+  - [x] 4.4 Migrate ErrorBanner component
     - Replace "Data refresh failed: " prefix with `t('error.dataRefreshFailed', { message })`
     - Replace "Dismiss error" aria-label with `t('error.dismissAriaLabel')`
     - _Requirements: 2.3, 3.2, 6.1_
 
-  - [ ] 4.5 Migrate ResetButton component
+  - [x] 4.5 Migrate ResetButton component
     - Replace "Reset System", "Resetting…", "Reset timed out. Please try again.", and the confirm message with `t()` calls using keys `reset.button`, `reset.pending`, `reset.timeoutError`, `reset.confirmMessage`
     - _Requirements: 2.3, 3.2, 6.1_
 
-  - [ ] 4.6 Migrate RelayControl component
+  - [x] 4.6 Migrate RelayControl component
     - Replace "Connected", "Disconnected" text and aria-label with `t()` calls
     - Use interpolation for aria-label: `t('relay.ariaLabel', { channel: channelId, state: relayActive ? t('relay.connected') : t('relay.disconnected') })`
     - _Requirements: 2.3, 3.2, 6.1_
 
-  - [ ] 4.7 Migrate OverloadFreeUptime component
+  - [x] 4.7 Migrate OverloadFreeUptime component
     - Replace "Uptime:", "No overloads recorded", and "X without overloads" with `t()` calls
     - Use interpolation: `t('uptimeFree.withoutOverloads', { time: formatTimeSince(lastOverloadAt) })`
     - _Requirements: 2.3, 2.4, 3.2, 3.3, 6.1_
 
-  - [ ] 4.8 Migrate ConfirmDialog component
+  - [x] 4.8 Migrate ConfirmDialog component
     - Replace "Cancel" and "Confirm" button text with `t('confirm.cancel')` and `t('confirm.confirm')`
     - _Requirements: 2.3, 3.2, 6.1_
 
-- [ ] 5. Checkpoint - Verify all components render correctly
+- [x] 5. Checkpoint - Verify all components render correctly
   - Ensure `npm run build` passes and all components use `t()` for user-facing text, ask the user if questions arise.
 
-- [ ] 6. Write tests for i18n infrastructure and components
-  - [ ] 6.1 Write property test: Translation key lookup returns correct value
+- [x] 6. Write tests for i18n infrastructure and components
+  - [x] 6.1 Write property test: Translation key lookup returns correct value
     - **Property 1: Translation key lookup returns correct value**
     - Create `src/__tests__/i18n.property.test.ts`
     - Generate random valid keys from the translation file and verify `t(key)` returns the expected value
     - Use `fast-check` with minimum 100 iterations
     - **Validates: Requirements 1.3, 1.7**
 
-  - [ ] 6.2 Write property test: Missing key fallback returns key itself
+  - [x] 6.2 Write property test: Missing key fallback returns key itself
     - **Property 2: Missing key fallback returns key itself**
     - Generate random strings not present in the translation file and verify `t(key)` returns the key unchanged
     - Use `fast-check` with minimum 100 iterations
     - **Validates: Requirements 1.4, 6.4**
 
-  - [ ] 6.3 Write property test: Interpolation preserves dynamic values
+  - [] 6.3 Write property test: Interpolation preserves dynamic values
     - **Property 3: Interpolation preserves dynamic values**
     - For keys with placeholders, generate random parameter values and verify they appear verbatim in the output
     - Use `fast-check` with minimum 100 iterations
     - **Validates: Requirements 1.6, 2.4, 3.3**
 
-  - [ ] 6.4 Write property test: Translation completeness per locale
+  - [] 6.4 Write property test: Translation completeness per locale
     - **Property 4: Translation completeness per locale**
     - Verify that every key referenced by components exists in each locale's translation file with a non-empty value
     - Use `fast-check` with minimum 100 iterations
     - **Validates: Requirements 2.2, 3.1, 6.1**
 
-  - [ ] 6.5 Write property test: Translation key parity across locales
+  - [] 6.5 Write property test: Translation key parity across locales
     - **Property 5: Translation key parity across locales**
     - Verify that pt-BR.json and en.json have identical key sets
     - Use `fast-check` with minimum 100 iterations
     - **Validates: Requirements 6.2**
 
-  - [ ] 6.6 Write property test: Locale selection updates active locale
+  - [] 6.6 Write property test: Locale selection updates active locale
     - **Property 6: Locale selection updates active locale**
     - For any supported locale, verify `changeLanguage(locale)` sets the active language correctly
     - Use `fast-check` with minimum 100 iterations
     - **Validates: Requirements 4.4**
 
-  - [ ] 6.7 Write property test: Locale persistence round-trip
+  - [] 6.7 Write property test: Locale persistence round-trip
     - **Property 7: Locale persistence round-trip**
     - For any supported locale, verify that persisting and re-reading from localStorage returns the same locale
     - Use `fast-check` with minimum 100 iterations
     - **Validates: Requirements 5.1, 5.2**
 
-  - [ ] 6.8 Write property test: Invalid persisted locale falls back to default
+  - [] 6.8 Write property test: Invalid persisted locale falls back to default
     - **Property 8: Invalid persisted locale falls back to default**
     - For any string not in SUPPORTED_LOCALES stored in localStorage, verify `getPersistedLocale()` returns `pt-BR`
     - Use `fast-check` with minimum 100 iterations
     - **Validates: Requirements 5.3**
 
-  - [ ] 6.9 Write unit tests for LanguageSelector component
+  - [x] 6.9 Write unit tests for LanguageSelector component
     - Create `src/__tests__/LanguageSelector.test.tsx`
     - Test: renders all locale options with native names
     - Test: shows current active locale as selected
     - Test: switching locale updates displayed text
     - _Requirements: 4.1, 4.2, 4.3, 4.5_
 
-  - [ ] 6.10 Write translation completeness build-time test
+  - [x] 6.10 Write translation completeness build-time test
     - Create `src/__tests__/i18n-completeness.test.ts`
     - Import both JSON files, flatten keys, verify identical key sets
     - Verify no empty string values in either file
     - _Requirements: 6.2, 6.3_
 
-- [ ] 7. Final checkpoint - Ensure all tests pass
+- [x] 7. Final checkpoint - Ensure all tests pass
   - Ensure all tests pass with `npx vitest --run`, ask the user if questions arise.
 
 ## Notes

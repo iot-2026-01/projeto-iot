@@ -14,7 +14,7 @@ const baseChannel: ChannelData = {
 // ─── Null channel ─────────────────────────────────────────────────────────────
 
 describe('ChannelCard — null channel', () => {
-  it('renders "Data unavailable" when channel is null', () => {
+  it('renders "Dados indisponíveis" when channel is null', () => {
     render(
       <ChannelCard
         channel={null}
@@ -23,14 +23,14 @@ describe('ChannelCard — null channel', () => {
       />
     );
 
-    expect(screen.getByText('Data unavailable')).toBeInTheDocument();
+    expect(screen.getByText('Dados indisponíveis')).toBeInTheDocument();
   });
 });
 
 // ─── Relay label ──────────────────────────────────────────────────────────────
 
 describe('ChannelCard — relay label', () => {
-  it('shows "Connected" when relayActive is true', () => {
+  it('shows "Conectado" when relayActive is true', () => {
     render(
       <ChannelCard
         channel={{ ...baseChannel, relayActive: true }}
@@ -39,10 +39,10 @@ describe('ChannelCard — relay label', () => {
       />
     );
 
-    expect(screen.getByText('Connected')).toBeInTheDocument();
+    expect(screen.getByText('Conectado')).toBeInTheDocument();
   });
 
-  it('shows "Disconnected" when relayActive is false', () => {
+  it('shows "Desconectado" when relayActive is false', () => {
     render(
       <ChannelCard
         channel={{ ...baseChannel, relayActive: false }}
@@ -51,14 +51,14 @@ describe('ChannelCard — relay label', () => {
       />
     );
 
-    expect(screen.getByText('Disconnected')).toBeInTheDocument();
+    expect(screen.getByText('Desconectado')).toBeInTheDocument();
   });
 });
 
 // ─── Overload-free uptime ─────────────────────────────────────────────────────
 
 describe('ChannelCard — overload-free uptime', () => {
-  it('shows "No overloads recorded" when lastOverloadAt is null', () => {
+  it('shows "Nenhuma sobrecarga registrada" when lastOverloadAt is null', () => {
     render(
       <ChannelCard
         channel={{ ...baseChannel, lastOverloadAt: null }}
@@ -67,7 +67,7 @@ describe('ChannelCard — overload-free uptime', () => {
       />
     );
 
-    expect(screen.getByText('No overloads recorded')).toBeInTheDocument();
+    expect(screen.getByText('Nenhuma sobrecarga registrada')).toBeInTheDocument();
   });
 
   it('shows time since last overload when lastOverloadAt is set', () => {
@@ -80,7 +80,7 @@ describe('ChannelCard — overload-free uptime', () => {
       />
     );
 
-    // Should show something like "5m 0s without overloads"
-    expect(screen.getByText(/without overloads/)).toBeInTheDocument();
+    // Should show something like "5m 0s sem sobrecargas"
+    expect(screen.getByText(/sem sobrecargas/)).toBeInTheDocument();
   });
 });

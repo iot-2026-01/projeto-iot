@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+
 interface ErrorBannerProps {
   message: string | null;
   type: 'polling' | 'action';
@@ -5,12 +7,14 @@ interface ErrorBannerProps {
 }
 
 export function ErrorBanner({ message, type, onDismiss }: ErrorBannerProps) {
+  const { t } = useTranslation();
+
   if (message === null) {
     return null;
   }
 
   const displayMessage =
-    type === 'polling' ? `Data refresh failed: ${message}` : message;
+    type === 'polling' ? t('error.dataRefreshFailed', { message }) : message;
 
   return (
     <div
@@ -22,7 +26,7 @@ export function ErrorBanner({ message, type, onDismiss }: ErrorBannerProps) {
         <button
           type="button"
           onClick={onDismiss}
-          aria-label="Dismiss error"
+          aria-label={t('error.dismissAriaLabel')}
           className="shrink-0 text-text-muted hover:text-trading-down transition-colors leading-none"
         >
           ✕

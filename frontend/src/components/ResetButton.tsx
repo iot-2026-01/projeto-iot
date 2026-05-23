@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ConfirmDialog } from './ConfirmDialog';
 
 interface ResetButtonProps {
@@ -9,6 +10,7 @@ interface ResetButtonProps {
 const RESET_TIMEOUT_MS = 10_000;
 
 export function ResetButton({ disabled, onReset }: ResetButtonProps) {
+  const { t } = useTranslation();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const [timeoutError, setTimeoutError] = useState<string | null>(null);
@@ -32,7 +34,7 @@ export function ResetButton({ disabled, onReset }: ResetButtonProps) {
     const timeoutId = setTimeout(() => {
       timedOut = true;
       setPending(false);
-      setTimeoutError('Reset timed out. Please try again.');
+      setTimeoutError(t('reset.timeoutError'));
     }, RESET_TIMEOUT_MS);
 
     try {
@@ -67,7 +69,7 @@ export function ResetButton({ disabled, onReset }: ResetButtonProps) {
             : 'bg-brand-yellow hover:bg-brand-yellow-active active:bg-brand-yellow-active cursor-pointer',
         ].join(' ')}
       >
-        {pending ? 'Resetting…' : 'Reset System'}
+        {pending ? t('reset.pending') : t('reset.button')}
       </button>
 
       {timeoutError !== null && (
@@ -81,7 +83,7 @@ export function ResetButton({ disabled, onReset }: ResetButtonProps) {
 
       <ConfirmDialog
         open={confirmOpen}
-        message="Are you sure you want to reset the system? This will clear all overload states and relay overrides."
+        message={t('reset.confirmMessage')}
         onConfirm={handleConfirm}
         onCancel={handleCancel}
       />

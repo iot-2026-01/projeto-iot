@@ -1,4 +1,5 @@
 import ReactDOM from 'react-dom';
+import { useTranslation } from 'react-i18next';
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -8,6 +9,7 @@ interface ConfirmDialogProps {
 }
 
 export function ConfirmDialog({ open, message, onConfirm, onCancel }: ConfirmDialogProps) {
+  const { t } = useTranslation();
   if (!open) {
     return null;
   }
@@ -36,14 +38,14 @@ export function ConfirmDialog({ open, message, onConfirm, onCancel }: ConfirmDia
             onClick={onCancel}
             className="px-4 py-2 rounded-md text-sm font-semibold text-text-body bg-surface-elevated hover:bg-hairline-dark transition-colors min-h-[44px] min-w-[44px]"
           >
-            Cancel
+            {t('confirm.cancel')}
           </button>
           <button
             type="button"
             onClick={onConfirm}
             className="px-4 py-2 rounded-md text-sm font-semibold text-on-primary bg-brand-yellow hover:bg-brand-yellow-active transition-colors min-h-[44px] min-w-[44px]"
           >
-            Confirm
+            {t('confirm.confirm')}
           </button>
         </div>
       </div>
