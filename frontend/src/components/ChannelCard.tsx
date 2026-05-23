@@ -56,7 +56,7 @@ export function ChannelCard({ channel }: ChannelCardProps) {
           channelId={channel.channel}
           relayActive={channel.relayActive}
         />
-        <OverloadFreeUptime lastOverloadAt={channel.lastOverloadAt} />
+        <OverloadFreeUptime lastOverloadAt={channel.lastOverloadAt} relayActive={channel.relayActive} />
       </div>
     </div>
   );
