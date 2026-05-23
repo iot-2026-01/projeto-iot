@@ -1,0 +1,49 @@
+{
+  "header": {
+    "title": "IoT Dashboard"
+  },
+  "telemetry": {
+    "title": "Telemetry",
+    "deviceId": "Device ID",
+    "uptime": "Uptime",
+    "events": "Events",
+    "lastUpdated": "Last Updated"
+  },
+  "overload": {
+    "title": "Overload Status",
+    "allNormal": "All channels normal",
+    "channelsInOverload": "{{count}} channel(s) in overload",
+    "channelLabel": "Channel {{id}}"
+  },
+  "channel": {
+    "title": "Channel {{id}}",
+    "status": {
+      "overload": "OVERLOAD"
+    },
+    "dataUnavailable": "Data unavailable"
+  },
+  "relay": {
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "ariaLabel": "Relay {{channel}}: {{state}}"
+  },
+  "uptimeFree": {
+    "label": "Uptime:",
+    "noOverloads": "No overloads recorded",
+    "withoutOverloads": "{{time}} without overloads"
+  },
+  "reset": {
+    "button": "Reset System",
+    "pending": "Resetting…",
+    "timeoutError": "Reset timed out. Please try again.",
+    "confirmMessage": "Are you sure you want to reset the system? This will clear all overload states and relay overrides."
+  },
+  "confirm": {
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "error": {
+    "dataRefreshFailed": "Data refresh failed: {{message}}",
+    "dismissAriaLabel": "Dismiss error"
+  }
+}

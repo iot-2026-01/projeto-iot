@@ -1,0 +1,49 @@
+{
+  "header": {
+    "title": "Painel IoT"
+  },
+  "telemetry": {
+    "title": "Telemetria",
+    "deviceId": "ID do Dispositivo",
+    "uptime": "Tempo Ativo",
+    "events": "Eventos",
+    "lastUpdated": "Última Atualização"
+  },
+  "overload": {
+    "title": "Status de Sobrecarga",
+    "allNormal": "Todos os canais normais",
+    "channelsInOverload": "{{count}} canal(is) em sobrecarga",
+    "channelLabel": "Canal {{id}}"
+  },
+  "channel": {
+    "title": "Canal {{id}}",
+    "status": {
+      "overload": "SOBRECARGA"
+    },
+    "dataUnavailable": "Dados indisponíveis"
+  },
+  "relay": {
+    "connected": "Conectado",
+    "disconnected": "Desconectado",
+    "ariaLabel": "Relé {{channel}}: {{state}}"
+  },
+  "uptimeFree": {
+    "label": "Tempo ativo:",
+    "noOverloads": "Nenhuma sobrecarga registrada",
+    "withoutOverloads": "{{time}} sem sobrecargas"
+  },
+  "reset": {
+    "button": "Resetar Sistema",
+    "pending": "Resetando…",
+    "timeoutError": "O reset expirou. Por favor, tente novamente.",
+    "confirmMessage": "Tem certeza que deseja resetar o sistema? Isso irá limpar todos os estados de sobrecarga e substituições de relés."
+  },
+  "confirm": {
+    "cancel": "Cancelar",
+    "confirm": "Confirmar"
+  },
+  "error": {
+    "dataRefreshFailed": "Falha ao atualizar dados: {{message}}",
+    "dismissAriaLabel": "Dispensar erro"
+  }
+}
