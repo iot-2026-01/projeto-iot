@@ -84,7 +84,7 @@ export class LoadBalancerModel {
 
   // Sync uptime from MQTT telemetry (milliseconds from ESP32)
   syncUptime(uptimeMs: number): void {
-    this.uptime = uptimeMs;
+    this.uptime = Math.floor(uptimeMs / 1000);
   }
 
   // Sync events count from ESP32 telemetry (ESP32 is the source of truth)

@@ -73,7 +73,7 @@ describe('LoadBalancerModel', () => {
 
   test('should sync uptime from MQTT telemetry', () => {
     model.syncUptime(123456);
-    expect(model.getTelemetry().uptime).toBe(123456);
+    expect(model.getTelemetry().uptime).toBe(123);
   });
 
   test('should return undefined for unknown channel', () => {
