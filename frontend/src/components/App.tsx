@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTelemetry } from '../hooks/useTelemetry';
-import { setRelay, resetSystem, type ApiError } from '../api/loadBalancer';
+import { resetSystem, type ApiError } from '../api/loadBalancer';
 import { ErrorBanner } from './ErrorBanner';
 import { TelemetryPanel } from './TelemetryPanel';
 import { OverloadPanel } from './OverloadPanel';
@@ -16,17 +16,6 @@ function App() {
   const { data, loading, error, connectionUnavailable, triggerPoll } = useTelemetry();
   const [actionError, setActionError] = useState<string | null>(null);
 
-  async function handleRelayChange(channelId: string, state: boolean): Promise<void> {
-    try {
-      await setRelay(channelId, state);
-      triggerPoll();
-    } catch (err) {
-      const apiErr = err as ApiError;
-      const statusPart = apiErr.status !== undefined ? ` (${apiErr.status})` : '';
-      setActionError(`Relay error — Channel ${channelId}:${statusPart} ${apiErr.message}`);
-    }
-  }
-
   async function handleReset(): Promise<void> {
     try {
       await resetSystem();
@@ -39,7 +28,6 @@ function App() {
   }
 
   const channels = data?.channels ?? [];
-  const controlsDisabled = connectionUnavailable;
 
   const pollingErrorMessage = error !== null ? error.message : null;
 
@@ -88,8 +76,6 @@ function App() {
               <ChannelCard
                 key={id}
                 channel={channelData}
-                disabled={controlsDisabled}
-                onRelayChange={handleRelayChange}
               />
             );
           })}
@@ -97,7 +83,7 @@ function App() {
 
         {/* Reset button */}
         <div className="flex justify-start">
-          <ResetButton disabled={controlsDisabled} onReset={handleReset} />
+          <ResetButton disabled={connectionUnavailable} onReset={handleReset} />
         </div>
       </main>
     </div>

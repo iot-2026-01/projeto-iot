@@ -19,14 +19,8 @@ describe('Property 3: ChannelCard renders all fields correctly', () => {
           lastOverloadAt: fc.oneof(fc.constant(null), fc.constant('2024-01-15T10:00:00.000Z')),
         }),
         (channelData) => {
-          const onRelayChange = vi.fn().mockResolvedValue(undefined);
-
           const { container, unmount } = render(
-            <ChannelCard
-              channel={channelData}
-              disabled={false}
-              onRelayChange={onRelayChange}
-            />
+            <ChannelCard channel={channelData} />
           );
 
           // Requirement 2.1: channel identifier is visible (uses i18n translation)

@@ -110,7 +110,10 @@ export class MqttSubscriberService {
         continue;
       }
 
-      this.model.updateChannelFromMqtt(channelId, ch.current_a, ch.overload, ch.relay);
+      // ESP32 uses active-low relay logic: relay=true means relay activated (load CUT).
+      // The API model uses relayActive=true to mean "load connected" (normal).
+      // Invert the firmware value to match the API/spec semantics.
+      this.model.updateChannelFromMqtt(channelId, ch.current_a, ch.overload, !ch.relay);
     }
 
     // Keep uptime and events in sync (ESP32 is the source of truth)

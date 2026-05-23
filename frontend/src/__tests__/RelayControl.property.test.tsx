@@ -1,35 +1,33 @@
 // Feature: iot-dashboard-frontend
-// Property 6: Relay control invokes API with correct parameters
+// Property 6: Relay indicator displays correct state
 // Validates: Requirements 5.2
 
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import * as fc from 'fast-check';
 import { RelayControl } from '../components/RelayControl';
+import i18n from '../i18n';
 
-describe('Property 6: Relay control invokes API with correct parameters', () => {
-  it('calls onToggle with (channelId, !relayActive) for any valid channel and relay state', async () => {
-    await fc.assert(
-      fc.asyncProperty(
+describe('Property 6: Relay indicator displays correct state', () => {
+  it('shows the correct label and has role="status" for any valid channel and relay state', () => {
+    fc.assert(
+      fc.property(
         fc.constantFrom('A', 'B', 'C'),
         fc.boolean(),
-        async (channelId, relayActive) => {
-          const onToggle = vi.fn().mockResolvedValue(undefined);
-
+        (channelId, relayActive) => {
           const { unmount } = render(
             <RelayControl
               channelId={channelId}
               relayActive={relayActive}
-              disabled={false}
-              onToggle={onToggle}
             />
           );
 
-          const button = screen.getByRole('button');
-          await userEvent.click(button);
+          const indicator = screen.getByRole('status');
+          expect(indicator).toBeInTheDocument();
 
-          expect(onToggle).toHaveBeenCalledTimes(1);
-          expect(onToggle).toHaveBeenCalledWith(channelId, !relayActive);
+          const expectedLabel = relayActive
+            ? i18n.t('relay.connected')
+            : i18n.t('relay.disconnected');
+          expect(indicator).toHaveTextContent(expectedLabel);
 
           unmount();
         }

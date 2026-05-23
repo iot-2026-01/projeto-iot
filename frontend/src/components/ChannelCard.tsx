@@ -5,11 +5,9 @@ import { OverloadFreeUptime } from './OverloadFreeUptime';
 
 interface ChannelCardProps {
   channel: ChannelData | null;
-  disabled: boolean;
-  onRelayChange: (channelId: string, state: boolean) => Promise<void>;
 }
 
-export function ChannelCard({ channel, disabled, onRelayChange }: ChannelCardProps) {
+export function ChannelCard({ channel }: ChannelCardProps) {
   const { t } = useTranslation();
 
   if (channel === null) {
@@ -57,8 +55,6 @@ export function ChannelCard({ channel, disabled, onRelayChange }: ChannelCardPro
         <RelayControl
           channelId={channel.channel}
           relayActive={channel.relayActive}
-          disabled={disabled}
-          onToggle={onRelayChange}
         />
         <OverloadFreeUptime lastOverloadAt={channel.lastOverloadAt} />
       </div>
