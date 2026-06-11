@@ -1,31 +1,16 @@
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTelemetry } from '../hooks/useTelemetry';
-import { resetSystem, type ApiError } from '../api/loadBalancer';
 import { ErrorBanner } from './ErrorBanner';
 import { TelemetryPanel } from './TelemetryPanel';
 import { OverloadPanel } from './OverloadPanel';
 import { ChannelCard } from './ChannelCard';
-import { ResetButton } from './ResetButton';
 import { LanguageSelector } from './LanguageSelector';
 
 const CHANNEL_IDS = ['A', 'B', 'C'] as const;
 
 function App() {
   const { t } = useTranslation();
-  const { data, loading, error, connectionUnavailable, triggerPoll } = useTelemetry();
-  const [actionError, setActionError] = useState<string | null>(null);
-
-  async function handleReset(): Promise<void> {
-    try {
-      await resetSystem();
-      triggerPoll();
-    } catch (err) {
-      const apiErr = err as ApiError;
-      const statusPart = apiErr.status !== undefined ? ` (${apiErr.status})` : '';
-      setActionError(`Reset error:${statusPart} ${apiErr.message}`);
-    }
-  }
+  const { data, loading, error } = useTelemetry();
 
   const channels = data?.channels ?? [];
 
@@ -51,13 +36,6 @@ function App() {
             type="polling"
           />
         )}
-        {actionError !== null && (
-          <ErrorBanner
-            message={actionError}
-            type="action"
-            onDismiss={() => setActionError(null)}
-          />
-        )}
       </div>
 
       {/* Main content */}
@@ -81,10 +59,6 @@ function App() {
           })}
         </div>
 
-        {/* Reset button */}
-        <div className="flex justify-start">
-          <ResetButton disabled={connectionUnavailable} onReset={handleReset} />
-        </div>
       </main>
     </div>
   );
