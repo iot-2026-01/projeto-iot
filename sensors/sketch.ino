@@ -1,26 +1,20 @@
 // ============================================================
 //  Sistema Inteligente de Balanceamento Dinamico de Carga
-//  ESP32 (MQTT + Wi-Fi) ou Arduino Uno (somente serial)
+//  ESP32 (MQTT + Wi-Fi)
 //
-//  ESP32 pin map:
+//  Pin map:
 //    34/35/32  – Current sensors
 //    21/22     – I2C LCD (SDA/SCL)
 //    25/26/27  – Relay IN1/IN2/IN3  (LOW = relay ON)
 //    18/19/23  – Status LEDs
 //    5         – Buzzer
 //    12/13/14  – Push buttons
-//
-//  Uno pin map: A0-A2, A4/A5, D2-D4, D6-D12 (sem MQTT)
 // ============================================================
 
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
-
-#if defined(ARDUINO_ARCH_ESP32)
 #include <WiFi.h>
 #include <PubSubClient.h>
-#define USE_MQTT 1
-#endif
 
 #if __has_include("secrets.h")
 #include "secrets.h"
@@ -39,7 +33,6 @@
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 // ── Pin definitions ──────────────────────────────────────────
-#if defined(ARDUINO_ARCH_ESP32)
 const uint8_t SENSOR_PINS[3] = {34, 35, 32};
 const uint8_t RELAY_PINS[3]  = {25, 26, 27};
 const uint8_t LED_PINS[3]    = {18, 19, 23};
@@ -49,21 +42,10 @@ const uint8_t BTN_RESET      = 13;
 const uint8_t BTN_MODE       = 14;
 const int16_t ADC_CENTER     = 2048;
 const float   AMPS_PER_COUNT = 0.007325f;
-#else
-const uint8_t SENSOR_PINS[3] = {A0, A1, A2};
-const uint8_t RELAY_PINS[3]  = {2,  3,  4};
-const uint8_t LED_PINS[3]    = {6,  7,  8};
-const uint8_t PIN_BUZZER     = 9;
-const uint8_t BTN_OVERRIDE   = 10;
-const uint8_t BTN_RESET      = 11;
-const uint8_t BTN_MODE       = 12;
-const int16_t ADC_CENTER     = 512;
-const float   AMPS_PER_COUNT = 0.0293f;
-#endif
 
 // ── Calibration ──────────────────────────────────────────────
-const float OVERLOAD_THRESHOLD = 10.0;
-const float HYSTERESIS         = 1.5;
+const float OVERLOAD_THRESHOLD      = 10.0;
+const float THRESHOLD_RECOVERY_GAP  = 1.5;
 
 // ── Sampling ─────────────────────────────────────────────────
 const uint16_t SAMPLES            = 200;
@@ -91,14 +73,13 @@ bool     any_overload_active   = false;
 uint32_t total_overload_events = 0;
 uint32_t redistribution_count  = 0;
 
-#if USE_MQTT
+// ── MQTT ─────────────────────────────────────────────────────
 WiFiClient   wifiClient;
 PubSubClient mqttClient(wifiClient);
 char         mqtt_topic[80];
 uint32_t     last_mqtt_retry_ms = 0;
 bool         mqtt_connected     = false;
 const uint32_t MQTT_RETRY_MS    = 5000;
-#endif
 
 // ── Button debounce ──────────────────────────────────────────
 struct Button {
@@ -115,13 +96,11 @@ const uint32_t DEBOUNCE_MS = 50;
 
 // ── Forward declarations ─────────────────────────────────────
 void log_serial();
-#if USE_MQTT
 void setup_wifi();
 void setup_mqtt();
 bool connect_mqtt();
 void publish_mqtt();
 void ensure_mqtt(uint32_t now);
-#endif
 
 // ============================================================
 //  SETUP
@@ -153,11 +132,9 @@ void setup() {
   pinMode(BTN_RESET,    INPUT_PULLUP);
   pinMode(BTN_MODE,     INPUT_PULLUP);
 
-#if USE_MQTT
   setup_wifi();
   setup_mqtt();
   connect_mqtt();
-#endif
 
   Serial.println(F("Ready."));
 }
@@ -175,7 +152,7 @@ void loop() {
     if (!overload[ch] && current_rms[ch] >= OVERLOAD_THRESHOLD) {
       overload[ch] = true;
       total_overload_events++;
-    } else if (overload[ch] && current_rms[ch] < (OVERLOAD_THRESHOLD - HYSTERESIS)) {
+    } else if (overload[ch] && current_rms[ch] < (OVERLOAD_THRESHOLD - THRESHOLD_RECOVERY_GAP)) {
       overload[ch] = false;
     }
   }
@@ -191,10 +168,7 @@ void loop() {
 
   handle_buzzer(now);
   handle_buttons(now);
-
-#if USE_MQTT
   ensure_mqtt(now);
-#endif
 
   if (now - last_display_ms >= DISPLAY_MS) {
     last_display_ms = now;
@@ -204,9 +178,7 @@ void loop() {
   if (now - last_log_ms >= LOG_INTERVAL_MS) {
     last_log_ms = now;
     log_serial();
-#if USE_MQTT
     publish_mqtt();
-#endif
   }
 }
 
@@ -347,10 +319,8 @@ void update_display() {
       if (manual_override) {
         lcd.print(F(" [OVR]  "));
         lcd.print(' ');
-#if USE_MQTT
       } else if (!mqtt_connected) {
         lcd.print(F(" [MQTT?] "));
-#endif
       } else {
         lcd.print(F("         "));
       }
@@ -409,10 +379,8 @@ void log_serial() {
 }
 
 // ============================================================
-//  MQTT  (ESP32 only)
+//  MQTT
 // ============================================================
-#if USE_MQTT
-
 void setup_wifi() {
   lcd.setCursor(0, 1);
   lcd.print(F(" Wi-Fi...       "));
@@ -536,5 +504,3 @@ void publish_mqtt() {
     mqtt_connected = false;
   }
 }
-
-#endif
