@@ -57,33 +57,6 @@ export async function getTelemetry(signal?: AbortSignal): Promise<TelemetryData>
   }
 }
 
-export async function getChannels(signal?: AbortSignal): Promise<ChannelData[]> {
-  try {
-    const response = await fetch('/api/load-balancer/channels', { signal });
-    return handleResponse<ChannelData[]>(response);
-  } catch (err) {
-    throw classifyError(err);
-  }
-}
-
-export async function setRelay(
-  channelId: string,
-  state: boolean,
-  signal?: AbortSignal
-): Promise<ChannelData> {
-  try {
-    const response = await fetch('/api/load-balancer/relay', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ channelId, state }),
-      signal,
-    });
-    return handleResponse<ChannelData>(response);
-  } catch (err) {
-    throw classifyError(err);
-  }
-}
-
 export async function resetSystem(signal?: AbortSignal): Promise<void> {
   try {
     const response = await fetch('/api/load-balancer/reset', {
