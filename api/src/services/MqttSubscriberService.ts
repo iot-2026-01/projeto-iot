@@ -12,7 +12,6 @@ interface MqttChannel {
 interface EspTelemetry {
   device: string;
   uptime_ms: number;
-  override: boolean;
   any_overload: boolean;
   events: number;
   redistributions: number;

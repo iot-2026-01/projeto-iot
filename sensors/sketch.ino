@@ -37,7 +37,6 @@
   const uint8_t RELAY_PINS[3]  = {25, 26, 27};
   const uint8_t LED_PINS[3]    = {18, 19, 23};
   const uint8_t PIN_BUZZER     = 5;
-  const uint8_t BTN_OVERRIDE   = 12;
   const uint8_t BTN_RESET      = 13;
   const uint8_t BTN_MODE       = 14;
   const int16_t ADC_CENTER     = 2048;
@@ -61,7 +60,6 @@
   float    current_rms[3]        = {0, 0, 0};
   bool     overload[3]           = {false, false, false};
   bool     relay_state[3]        = {false, false, false};
-  bool     manual_override       = false;
   uint8_t  display_mode          = 0;
 
   uint32_t last_display_ms       = 0;
@@ -88,7 +86,6 @@
     uint32_t last_change_ms;
   };
 
-  Button btn_override = {BTN_OVERRIDE, HIGH, 0};
   Button btn_reset    = {BTN_RESET,    HIGH, 0};
   Button btn_mode     = {BTN_MODE,     HIGH, 0};
 
@@ -128,7 +125,6 @@
     pinMode(PIN_BUZZER, OUTPUT);
     digitalWrite(PIN_BUZZER, LOW);
 
-    pinMode(BTN_OVERRIDE, INPUT_PULLUP);
     pinMode(BTN_RESET,    INPUT_PULLUP);
     pinMode(BTN_MODE,     INPUT_PULLUP);
 
@@ -161,7 +157,7 @@
     for (uint8_t ch = 0; ch < 3; ch++)
       if (overload[ch]) any_overload_active = true;
 
-    if (!manual_override) redistribute_load();
+    redistribute_load();
 
     for (uint8_t ch = 0; ch < 3; ch++)
       digitalWrite(LED_PINS[ch], overload[ch] ? HIGH : LOW);
@@ -259,22 +255,8 @@
   }
 
   void handle_buttons(uint32_t now) {
-    if (button_pressed(btn_override, now)) {
-      manual_override = !manual_override;
-      if (manual_override) {
-        Serial.println(F("BTN: Manual override ENABLED"));
-        for (uint8_t ch = 0; ch < 3; ch++) {
-          relay_state[ch] = true;
-          digitalWrite(RELAY_PINS[ch], LOW);
-        }
-      } else {
-        Serial.println(F("BTN: Manual override DISABLED"));
-      }
-    }
-
     if (button_pressed(btn_reset, now)) {
       Serial.println(F("BTN: Reset"));
-      manual_override = false;
       for (uint8_t ch = 0; ch < 3; ch++) {
         overload[ch]    = false;
         relay_state[ch] = false;
@@ -314,10 +296,7 @@
 
         lcd.setCursor(0, 1);
         print_channel_short(2);
-        if (manual_override) {
-          lcd.print(F(" [OVR]  "));
-          lcd.print(' ');
-        } else if (!mqtt_connected) {
+        if (!mqtt_connected) {
           lcd.print(F(" [MQTT?] "));
         } else {
           lcd.print(F("         "));
@@ -370,8 +349,7 @@
       Serial.print(overload[ch] ? 1 : 0);    Serial.print(',');
       Serial.println(relay_state[ch] ? 1 : 0);
     }
-    if (manual_override)
-      Serial.println(F("# Manual override active"));
+
   }
 
   // ============================================================
@@ -466,7 +444,6 @@
       "{"
         "\"device\":\"%s\","
         "\"uptime_ms\":%lu,"
-        "\"override\":%s,"
         "\"any_overload\":%s,"
         "\"events\":%lu,"
         "\"redistributions\":%lu,"
@@ -478,7 +455,6 @@
       "}",
       DEVICE_ID,
       millis(),
-      manual_override ? "true" : "false",
       any_overload_active ? "true" : "false",
       total_overload_events,
       redistribution_count,
